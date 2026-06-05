@@ -1,0 +1,171 @@
+# 🎯 Interview Answer: “How do you reduce token usage in LLM systems?”
+
+> In my system, I implemented multiple strategies to reduce token usage while maintaining response quality.
+
+---
+
+## 🧠 1. Limit Conversation History
+
+> I restrict the number of past messages sent to the model by keeping only the last few interactions instead of the full conversation.
+
+👉 Example:
+
+* Only last **2–4 messages** are used
+* Prevents token growth over time
+
+---
+
+## 🧠 2. Compress Stored Responses
+
+> Before storing responses in memory, I trim or compress long outputs to reduce their size when reused.
+
+👉 Benefit:
+
+* Smaller prompts
+* Lower input tokens
+
+---
+
+## 🧠 3. Concise Prompt Engineering
+
+> I designed system prompts to enforce short and precise responses, such as:
+
+* “Keep answers concise”
+* “Avoid unnecessary details”
+
+👉 This reduces **output tokens significantly**
+
+---
+
+## 🧠 4. Adaptive `max_tokens`
+
+> Instead of fixed limits, I dynamically adjust `max_tokens` based on input size.
+
+👉 Example:
+
+* Small query → fewer tokens
+* Larger query → slightly higher limit
+
+---
+
+## 🧠 5. Conditional Context Usage
+
+> For simple or standalone queries, I skip passing conversation history entirely.
+
+👉 This avoids unnecessary token usage for stateless queries.
+
+---
+
+## 🧠 6. Caching Repeated Queries
+
+> I cache responses for repeated queries so that identical requests don’t hit the LLM again.
+
+👉 Result:
+
+* Zero tokens used for cached responses
+
+---
+
+## 🧠 7. Input Normalization
+
+> I normalize user input (case, punctuation) before caching to improve cache hit rate and reduce redundant LLM calls.
+
+---
+
+# 🔥 Strong Closing Line
+
+> Overall, I focused on minimizing both input and output tokens by controlling context size, optimizing prompts, and avoiding redundant API calls through caching.
+
+---
+
+# ⚡ Short Version (if interviewer wants quick answer)
+
+> I reduce token usage by limiting conversation history, enforcing concise prompts, dynamically controlling max tokens, skipping context for simple queries, and caching repeated requests to avoid unnecessary LLM calls.
+
+❓ Q1: “What happens if you reduce history too much?”
+
+Answer:
+
+If we reduce history too aggressively, the model can lose important context, which leads to incorrect or generic responses. So it’s a trade-off—I keep a small window of recent messages and plan to use summarization for long conversations to preserve context efficiently.
+
+❓ Q2: “Why not always cache everything?”
+
+Answer:
+
+Because LLM responses depend on context. The same query can produce different answers based on conversation history. So I cache only stateless or normalized queries, and avoid caching context-dependent ones unless I include context in the cache key.
+
+❓ Q3: “How do you decide optimal max_tokens?”
+
+Answer:
+
+I use adaptive limits based on input size. Short queries get smaller limits, and slightly larger ones get higher limits. This avoids over-generating responses while still maintaining completeness.
+
+❓ Q4: “How do you reduce cost at scale?”
+
+Answer:
+
+I combine multiple strategies:
+
+Cache repeated queries
+Limit history window
+Use smaller models like gpt-4o-mini
+Optimize prompts for concise output
+Avoid unnecessary API calls
+❓ Q5: “How would you improve this system further?”
+
+Answer:
+
+I would replace full-history memory with summarization and retrieval-based memory (RAG), so only relevant context is sent instead of the entire conversation. This significantly reduces token usage while improving response quality.
+
+❓ Q6: “How do you monitor token usage?”
+
+Answer:
+
+I log token usage per request using the response metadata, including prompt and completion tokens. This helps identify high-cost queries and optimize them.
+
+❓ Q7: “What’s the biggest challenge in token optimization?”
+
+Answer:
+
+The biggest challenge is balancing cost and response quality. Reducing tokens too much can degrade accuracy, so the system must dynamically adjust based on context and query complexity.
+
+🔥 FINAL INTERVIEW CLOSER (VERY STRONG)
+
+My approach focuses on minimizing tokens without compromising context by combining prompt optimization, memory control, and caching. For large-scale systems, I would further enhance this using summarization and retrieval-based architectures.
+
+-------
+
+“I use Redis for exact caching and a vector database for semantic retrieval. Redis provides low-latency responses for repeated queries, while the vector database enables reuse of responses for semantically similar queries.”
+FINAL PRODUCTION FLOW for chat api(check history)
+User Request
+   ↓
+1️⃣ Normalize input
+   ↓
+2️⃣ Redis cache (exact match)
+   ↓ (miss)
+3️⃣ Vector DB (semantic search)
+   ↓ (miss)
+4️⃣ Fetch memory (session context)
+   ↓
+5️⃣ LLM call (with context)
+   ↓
+6️⃣ Stream response
+   ↓
+7️⃣ Store:
+    - Redis (exact cache)
+    - Vector DB (semantic)
+    - Memory (conversation)
+
+DAY 12: LIGHTWEIGHT RE-RANKING (FAST + PRACTICAL)
+Query
+ ↓
+Vector search (top 5)
+ ↓
+Sort by distance
+ ↓
+Keyword re-ranking
+ ↓
+Top 3 chunks
+ ↓
+LLM
+
