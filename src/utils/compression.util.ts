@@ -10,7 +10,7 @@ const queryWords = query.toLowerCase().split(/\s+/);
     );
   });
   const result = relevantSentences.join(". ").trim();
-  console.log("compressChunk:",result);
+
   
   return result;
 }

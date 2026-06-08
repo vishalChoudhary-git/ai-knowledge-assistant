@@ -5,9 +5,9 @@ import { rerankChunks } from '../utils/rerank.util'
 import { keywordScore } from "../utils/keyword.util";
 import { compressChunk } from "../utils/compression.util";
 import { getCollection } from "../vector/vectorClient";
-
+import { config } from "../config/env";
 const client = new ChromaClient({
-  path: process.env.CHROMA_URL, 
+  path: config.chromaUrl, 
 });
 const COLLECTION_NAME = 'semantic-cache';
 const DOC_COLLECTION = "documents";
