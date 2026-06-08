@@ -17,8 +17,6 @@ function getMaxTokens(message: string) {
 }
 export async function generateChatResponse(message: string, history: any,sessionId: string   ): Promise<string> {
   const normalizedMessage = normalize(message);
-  console.log(`normalizedMessage`,normalizedMessage);
-  
     // 🔥 create hash Accuracy high Cache Hit lower
   const hashInput = JSON.stringify({
   normalizedMessage,
@@ -28,7 +26,6 @@ export async function generateChatResponse(message: string, history: any,session
   const hash = createHash(hashInput);
   // 1️⃣ Redis cache (exact)
   const cacheKey = `cache:${sessionId}:${hash}`;
-  console.log("Cache key:", cacheKey);
   const cachedChatMessage = await getCache(cacheKey)
     if(cachedChatMessage){
   console.log(`Cache hit 🚀!!!-----------------`);

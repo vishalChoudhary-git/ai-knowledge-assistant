@@ -33,12 +33,8 @@ export const ragQueryHandler = async (req: Request, res: Response, next: NextFun
     const { message, source, sessionId, stream = false} = req.body;
     const history = await getMemory(sessionId);
     const enhancedQuery = buildEnhancedQuery(message, history);
-    console.log(`enhancedQuery:${enhancedQuery}`);
-    
     const contextChunks = await retrieveContext(enhancedQuery, source) as string[];
 
-  console.log(`contextChunks:================= ${contextChunks}`);
-  
     const messageToLLM = buildRagPrompt(message, contextChunks)
    // 🔥 STREAM MODE
     if (stream) {

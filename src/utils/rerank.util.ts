@@ -20,7 +20,6 @@ export function rerankChunks(query: string, chunks: string[] ){
   })
 ).sort((a, b) => b.score - a.score) // higher score first
  .map(item => item.chunk)
-  console.log(`reRankScore: ===========${reRankScore}`);
   
  return reRankScore;
 }

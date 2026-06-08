@@ -4,9 +4,10 @@ import { chunkText } from "../utils/chunk.util";
 import { rerankChunks } from '../utils/rerank.util'
 import { keywordScore } from "../utils/keyword.util";
 import { compressChunk } from "../utils/compression.util";
+import { getCollection } from "../vector/vectorClient";
 
 const client = new ChromaClient({
-  path: "http://localhost:8000",
+  path: process.env.CHROMA_URL, 
 });
 const COLLECTION_NAME = 'semantic-cache';
 const DOC_COLLECTION = "documents";
@@ -17,17 +18,9 @@ export async function getDocCollection() {
     embeddingFunction: null,
   });
 }
-export async function getOrCreateCollections() {
-  console.log(`ChromaClient: ${client}`);
-  
-  return await client.getOrCreateCollection({
-    name: COLLECTION_NAME,
-    embeddingFunction: null,
-  });
-}
 
 export async function storeVector(message: string, response: string) {
-  const collection = await getOrCreateCollections();
+  const collection = await getCollection(COLLECTION_NAME);
 
   const embedding = await generateEmbedding(message);
 
@@ -41,7 +34,7 @@ export async function storeVector(message: string, response: string) {
 
 export async function searchVector(message:string) {
 
-  const collection = await getOrCreateCollections();
+  const collection = await getCollection(COLLECTION_NAME);
   const embedding = await generateEmbedding(message);
 
   const result = collection.query({
