@@ -89,7 +89,6 @@ const limited: string[] = [];
       const vectorScore = 1 - distance[i]; // convert distance → similarity
       const keyword = keywordScore(query, doc);
       const finalScore = vectorScore * 0.7 + keyword * 0.3;
-      console.log(`finalScore:${finalScore}`);
       
       return {
         doc,
