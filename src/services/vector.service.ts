@@ -6,6 +6,7 @@ import { keywordScore } from "../utils/keyword.util";
 import { compressChunk } from "../utils/compression.util";
 import { getCollection } from "../vector/vectorClient";
 import { config } from "../config/env";
+import { logger } from "../utils/logger";
 const client = new ChromaClient({
   path: config.chromaUrl, 
 });
@@ -62,7 +63,7 @@ export async function storeDocument(text: string, source: string) {
     });
   }
 
-  console.log("Document stored in vector DB ✅");
+  logger.info("Document stored in vector DB ✅");
 }
 function normalize(text: string) {
   return text

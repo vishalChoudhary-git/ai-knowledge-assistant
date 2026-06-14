@@ -4,6 +4,7 @@ import { Response } from "express";
 import { getCache, setCache } from "./cache.service";
 import { createHash } from "../utils/hash.util";
 import { searchVector,storeVector } from "./vector.service";
+import { logger } from "../utils/logger";
 function normalize(text: string) {
   return text
     .toLowerCase()
@@ -28,7 +29,7 @@ export async function generateChatResponse(message: string, history: any,session
   const cacheKey = `cache:${sessionId}:${hash}`;
   const cachedChatMessage = await getCache(cacheKey)
     if(cachedChatMessage){
-  console.log(`Cache hit 🚀!!!-----------------`);
+  logger.debug(`Cache hit 🚀!!!-----------------`);
   return cachedChatMessage;
 }
   // 2️⃣ Vector DB (semantic)
@@ -36,16 +37,16 @@ export async function generateChatResponse(message: string, history: any,session
   const match = vectorResult?.metadatas?.[0]?.[0];
   // 0.1 best 0.9 worst
   const distance = vectorResult?.distances?.[0]?.[0];
-  console.log(`distance: ${distance}`);
+  logger.debug(`distance: ${distance}`);
   
   if (match && typeof match.response === "string" &&
   distance !== null &&
   distance < 0.4) {
-    console.log("Semantic cache hit 🚀");
+    logger.debug("Semantic cache hit 🚀");
     return match.response;
   }
   // 3️⃣ LLM fallback
-  console.log(`Calling OpenAI`);
+  logger.debug(`Calling OpenAI`);
   const messages = buildChatPrompt(message,history)
   const response = await openai.chat.completions.create({
     model: 'gpt-4o-mini',
@@ -54,7 +55,7 @@ export async function generateChatResponse(message: string, history: any,session
     messages: messages
   })
     // 🔥 Token logging
-  console.log("Token Usage:", {
+  logger.info("Token Usage:", {
     input: response.usage?.prompt_tokens,
     output: response.usage?.completion_tokens,
     total: response.usage?.total_tokens,
@@ -100,7 +101,7 @@ export async function streamChatResponse(message: string,history: any, res: Resp
     }
   }
   res.write("data: [DONE]\n\n");
-  console.log("Approx output length:", outputLength);
+  logger.debug("Approx output length:", outputLength);
   res.end();
 }
 // /ask API max_tokens: 300–500

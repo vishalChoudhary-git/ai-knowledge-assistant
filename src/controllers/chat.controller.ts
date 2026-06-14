@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { generateChatResponse,streamChatResponse } from "../services/llm.service";
 import { validateMessage as validateRequest } from "../utils/validator";
 import { addToMemory, getMemory } from "../utils/memory.store";
-
+import { logger } from "../utils/logger";
 function compressText(text: string): string {
   return text.length > 300 ? text.slice(0, 300) : text;
 }
@@ -26,7 +26,7 @@ try {
   })  
 } catch (error) {
   
-  console.error(`error: ${error}`);
+  logger.error(`error: ${error}`);
   next(error)
 }
 
@@ -50,7 +50,7 @@ export const chatStreamHandler = async (req: Request,res: Response, next: NextFu
     res.flushHeaders?.();
         // 🔥 Handle client disconnect
     req.on("close", () => {
-      console.log("Client disconnected");
+      logger.info("Client disconnected");
     });
     if(!req.body.sessionId)
     return res.status(400).json({ error: "sessionId required" }); 
