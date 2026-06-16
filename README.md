@@ -37,3 +37,19 @@ npm run dev
 
 npm install
 npm run dev
+
+### Future enhancements:
+
+| Priority | Item                                                             | Reason                   |
+| -------- | ---------------------------------------------------------------- | ------------------------ |
+| High     | Replace Chroma with managed Vector DB (Qdrant/Pinecone/pgvector) | Persistent cloud storage |
+| High     | Health & Readiness endpoints                                     | Production monitoring    |
+| High     | Pino logging                                                     | Structured logs          |
+| High     | Authentication                                                   | Multi-user support       |
+| Medium   | React architecture refactor                                      | Better maintainability   |
+| Medium   | Request ID middleware                                            | Tracing                  |
+| Medium   | Metrics & Monitoring                                             | Observability            |
+| Medium   | Docker Compose                                                   | Easier local setup       |
+| Low      | Kubernetes                                                       | Production scale         |
+| Low      | CI/CD                                                            | Automated deployments    |
+ 
