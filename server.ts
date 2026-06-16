@@ -8,6 +8,6 @@ import { logger } from "./src/utils/logger";
   await connectRedis();
 })();
 app.use("/api", apiLimiter);
-app.listen(config.PORT, () => {
-  logger.info(`Server running on port ${config.PORT}`);
+app.listen(config.port, () => {
+  logger.info(`Server running on port ${config.port}`);
 });

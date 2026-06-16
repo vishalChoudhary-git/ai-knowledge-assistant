@@ -4,6 +4,8 @@ dotenv.config();
 export const config = {
   openAiKey: process.env.OPENAI_API_KEY!,
   redisUrl: process.env.REDIS_CONNECTION_STRING!,
-  chromaUrl: process.env.CHROMA_URL!,
-  PORT: process.env.PORT || 3000,
+  chromaHost: process.env.CHROMA_HOST!,
+  chromaPort: process.env.CHROMA_PORT!,
+  chromaSsl: process.env.CHROMA_SSL === 'true',
+  port: process.env.PORT || 3000,
 };

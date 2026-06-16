@@ -8,7 +8,9 @@ import { getCollection } from "../vector/vectorClient";
 import { config } from "../config/env";
 import { logger } from "../utils/logger";
 const client = new ChromaClient({
-  path: config.chromaUrl, 
+  host: config.chromaHost,
+  port: parseInt(config.chromaPort),
+  ssl: config.chromaSsl,
 });
 const COLLECTION_NAME = 'semantic-cache';
 const DOC_COLLECTION = "documents";

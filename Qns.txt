@@ -1,0 +1,70 @@
+# AI Knowledge Assistant Demo Questions
+
+## FinPay
+
+* What is FinPay?
+* What services does FinPay provide?
+* Does FinPay support UPI?
+* Can I pay electricity bills?
+* Can I pay gas bills?
+* How much money can I transfer in one day?
+* What is the single transaction limit?
+* How much can premium users transfer?
+* Can I transfer ₹2,00,000?
+* What are the benefits of Premium Membership?
+* How much does Premium cost?
+* Does Premium provide cashback?
+* What security features are available?
+* Does FinPay support biometric login?
+* Does FinPay use two-factor authentication?
+* How does FinPay prevent fraud?
+* Does FinPay support international transfers?
+* What are the customer support timings?
+
+---
+
+## HR
+
+* How many annual leaves are available?
+* How many sick leaves do employees get?
+* Can employees work from home?
+* How many days per week can employees work remotely?
+* Who is covered under medical insurance?
+* What is the notice period?
+* How often are performance reviews conducted?
+* What hotel expenses are reimbursed?
+* What are the company working hours?
+
+---
+
+## Engineering
+
+* What branching strategy is used?
+* How many approvals are required before merging?
+* What coding standards should developers follow?
+* What testing is mandatory?
+* How should APIs be optimized?
+* Should secrets be stored in source code?
+* What are the logging guidelines?
+* What is required before production deployment?
+
+---
+
+## Conversation Memory Demo
+
+1. What is FinPay?
+2. How much can premium users transfer?
+3. How much does it cost?
+4. Does it support international transfers?
+5. What security features does it provide?
+
+---
+
+## Cross-Source Demo
+
+* Which document talks about authentication?
+* Which document discusses deployment?
+* Which document mentions logging?
+* Compare FinPay security with Engineering security guidelines.
+* Which sources mention approval processes?
+* Which document contains work from home information?

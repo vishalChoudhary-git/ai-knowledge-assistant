@@ -52,4 +52,13 @@ npm run dev
 | Medium   | Docker Compose                                                   | Easier local setup       |
 | Low      | Kubernetes                                                       | Production scale         |
 | Low      | CI/CD                                                            | Automated deployments    |
- 
+FinPay
+What is FinPay?
+
+What services does FinPay provide?
+
+Does FinPay support UPI?
+
+Can I pay electricity bills?
+
+Can I pay gas bills? 
