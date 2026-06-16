@@ -8,4 +8,7 @@ export const config = {
   chromaPort: process.env.CHROMA_PORT!,
   chromaSsl: process.env.CHROMA_SSL === 'true',
   port: process.env.PORT || 3000,
+  allowedOrigins: process.env.ALLOWED_ORIGINS
+    ?.split(",")
+    .map(origin => origin.trim()) || [],
 };
