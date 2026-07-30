@@ -67,6 +67,43 @@ export async function storeDocument(text: string, source: string) {
 
   logger.info("Document stored in vector DB ✅");
 }
+
+function findStringValue(value: any): string | undefined {
+  if (typeof value === "string") {
+    if (value === "[object Object]" || value.trim() === "") return undefined;
+    return value;
+  }
+  if (Array.isArray(value)) {
+    for (const item of value) {
+      const found = findStringValue(item);
+      if (found) return found;
+    }
+    return undefined;
+  }
+  if (value && typeof value === "object") {
+    if (typeof value.source === "string") return findStringValue(value.source);
+    for (const item of Object.values(value)) {
+      const found = findStringValue(item);
+      if (found) return found;
+    }
+  }
+  return undefined;
+}
+
+export async function listSources() {
+  const col = await getDocCollection();
+
+  const res: any = await (col as any).get?.({ include: ["metadatas"], limit: 1000 }) || {};
+  const metadatas: any[] = res.metadatas || [];
+  const sources = new Set<string>();
+
+  for (const md of metadatas) {
+    const found = findStringValue(md);
+    if (found) sources.add(found);
+  }
+
+  return Array.from(sources);
+}
 function normalize(text: string) {
   return text
     .toLowerCase()

@@ -1,9 +1,34 @@
-import { retrieveContext, storeDocument } from "../services/vector.service";
+import { retrieveContext, storeDocument, listSources } from "../services/vector.service";
 import { buildRagPrompt } from "../utils/prompt.builder";
 import type { NextFunction, Request, Response } from "express";
 import { openai } from "../config/openai";
 import { addToMemory, getMemory } from "../utils/memory.store";
 import { buildEnhancedQuery } from "../utils/query.util";
+import { redisClient } from "../utils/redis";
+import pdfParse from "pdf-parse";
+
+interface MulterRequest extends Request {
+  file?: Express.Multer.File;
+}
+
+async function extractFileText(req: MulterRequest): Promise<string> {
+  const file = req.file;
+
+  if (!file) {
+    throw new Error("No file uploaded");
+  }
+
+  if (file.mimetype === "application/pdf") {
+    const data = await pdfParse(file.buffer);
+    return data.text;
+  }
+
+  if (file.mimetype === "text/plain") {
+    return file.buffer.toString("utf-8");
+  }
+
+  throw new Error("Unsupported file type. Please upload a PDF or TXT file.");
+}
 
 export const uploadDocumentHandler = async (
   req: Request,
@@ -11,18 +36,63 @@ export const uploadDocumentHandler = async (
   next: NextFunction
 ) => {
   try {
-    const { text, source } = req.body;
+    const source = req.body.source;
+    let text = "";
+
+    if (req.is("application/json")) {
+      text = req.body.text;
+    } else {
+      text = await extractFileText(req);
+    }
+
+    if (!source || typeof source !== "string") {
+      return res.status(400).json({ error: "Missing source" });
+    }
 
     if (!text || text.length < 20) {
       return res.status(400).json({ error: "Invalid document text" });
     }
 
     await storeDocument(text, source);
+    await redisClient.sAdd("rag:sources", JSON.stringify(source));
 
     res.json({
       success: true,
       message: "Document stored successfully",
     });
+  } catch (err: any) {
+    if (err.message === "No file uploaded" || err.message.includes("Unsupported file type")) {
+      return res.status(400).json({ error: err.message });
+    }
+    next(err);
+  }
+};
+
+export const getSourcesHandler = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    let sources = await redisClient.sMembers("rag:sources");
+    const validSources = sources.filter(
+      (source) => typeof source === "string" && source.trim() !== "" && source !== "[object Object]"
+    );
+
+    if (validSources.length !== sources.length) {
+      const invalid = sources.filter((source) => !validSources.includes(source));
+      for (const item of invalid) {
+        await redisClient.sRem("rag:sources", item);
+      }
+      sources = validSources;
+    }
+
+    if (sources.length === 0) {
+      sources = await listSources();
+      if (sources.length > 0) {
+        for (const item of sources) {
+          await redisClient.sAdd("rag:sources", item);
+        }
+      }
+    }
+
+    res.json({ success: true, data: sources });
   } catch (err) {
     next(err);
   }
